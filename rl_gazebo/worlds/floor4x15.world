@@ -1,0 +1,432 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version='1.7'>
+  <world name='world'>
+   <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
+        <ros>
+            <namespace>/demo</namespace>
+            <remapping>model_states:=model_states_demo</remapping>
+            <remapping>link_states:=link_states_demo</remapping>
+        </ros>
+        <update_rate>1.0</update_rate>
+    </plugin>
+
+    <gui>
+        <camera name='gzclient_camera'>
+            <pose>-4.70385 10.895 16.2659 -0 0.921795 -1.12701</pose>
+        </camera>
+    </gui>
+
+    <gravity>0 0 -9.8</gravity>
+
+    <physics default="0" name="default_physics" type="ode">
+        <max_step_size>0.001</max_step_size> <!-- Higher fidelity -->
+        <real_time_factor>1</real_time_factor>
+        <real_time_update_rate>1000</real_time_update_rate> <!-- Balancing accuracy and performance -->
+    </physics>
+
+    <!-- Example of adding realistic sensor noise -->
+    <sensor>
+        <noise type="gaussian">
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+        </noise>
+    </sensor>
+
+    <!-- Example of terrain and friction setup -->
+    <surface>
+        <friction>
+            <ode>
+                <mu>0.9</mu> <!-- Adjust to match real surface conditions -->
+                <mu2>0.9</mu2>
+            </ode>
+        </friction>
+        <contact>
+            <ode>
+                <kp>100000.0</kp>
+                <kd>1.0</kd>
+            </ode>
+        </contact>
+    </surface>
+    <!--=========================================================================-->
+    <light name='sun' type='directional'>
+        <cast_shadows>1</cast_shadows>
+        <pose>0 0 10 0 -0 0</pose> <!-- Keep the sun high to mimic overhead sunlight -->
+        <diffuse>0.9 0.85 0.8 1</diffuse> <!-- Slightly warmer, brighter diffuse light for natural sunlight -->
+        <specular>0.3 0.3 0.3 1</specular> <!-- Increase specular for more pronounced reflections -->
+        <attenuation>
+            <range>1000</range>
+            <constant>0.8</constant> <!-- Lowered slightly for a more even light distribution -->
+            <linear>0.01</linear> <!-- Keep as is; minimal effect on directional lights -->
+            <quadratic>0.001</quadratic> <!-- Keep as is; minimal effect on directional lights -->
+        </attenuation>
+        <direction>-0.3 0.2 -0.9</direction> <!-- Adjusted direction for a more realistic sun angle -->
+        <spot>
+            <inner_angle>0</inner_angle> <!-- Not used in directional lights -->
+            <outer_angle>0</outer_angle> <!-- Not used in directional lights -->
+            <falloff>0</falloff> <!-- Not used in directional lights -->
+        </spot>
+    </light>
+
+    <model name='ground_plane'>
+        <static>1</static> <!-- Keep the ground plane static -->
+        <link name='link'>
+            <collision name='collision'>
+                <geometry>
+                    <plane>
+                        <normal>0 0 1</normal> <!-- Horizontal plane -->
+                        <size>100 100</size> <!-- Adjust to match real environment size -->
+                    </plane>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0.8</mu> <!-- Adjusted for a typical indoor surface like concrete -->
+                            <mu2>0.6</mu2> <!-- Slightly lower to simulate anisotropic friction -->
+                        </ode>
+                        <torsional>
+                            <ode/>
+                        </torsional>
+                    </friction>
+                    <contact>
+                        <ode/>
+                    </contact>
+                    <bounce/> <!-- Default settings; bounce not typically needed for ground plane -->
+                </surface>
+                <max_contacts>10</max_contacts> <!-- Adequate for most scenarios -->
+            </collision>
+            <visual name='visual'>
+                <cast_shadows>1</cast_shadows> <!-- Enable shadows for realism -->
+                <geometry>
+                    <plane>
+                        <normal>0 0 1</normal>
+                        <size>100 100</size> <!-- Match the collision geometry size -->
+                    </plane>
+                </geometry>
+                <material>
+                    <script>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                        <name>Gazebo/Concrete</name> <!-- Change to a realistic material for your environment -->
+                    </script>
+                </material>
+            </visual>
+            <self_collide>0</self_collide> <!-- Not necessary for a static ground plane -->
+            <enable_wind>0</enable_wind> <!-- Set to 1 if wind effects are needed -->
+            <kinematic>0</kinematic> <!-- Keep as non-kinematic since it's static -->
+        </link>
+    </model>
+
+    <gravity>0 0 -9.81</gravity> <!-- Standard Earth's gravity, can fine-tune if testing for slight variances -->
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field> <!-- Adjust to specific geographical magnetic field values if needed -->
+    <atmosphere type='adiabatic'/> <!-- Keep this unless specific atmospheric conditions need simulation -->
+    <physics type='ode'>
+        <max_step_size>0.002</max_step_size> <!-- Adjust for real-time performance; smaller values for more accurate physics -->
+        <real_time_factor>1</real_time_factor> <!-- Keep real-time simulation -->
+        <real_time_update_rate>2000</real_time_update_rate> <!-- Increase for smoother simulation but ensure it matches real robot's update rates -->
+    </physics>
+    <scene>
+        <ambient>0.6 0.6 0.6 1</ambient> <!-- Brightened ambient light to simulate indoor lighting -->
+        <background>0.8 0.8 0.8 1</background> <!-- Lighter background to better match realistic sky conditions or indoor walls -->
+        <shadows>1</shadows> <!-- Keep shadows enabled for realism -->
+    </scene>
+    <audio>
+        <device>default</device> <!-- Retain default audio settings unless specific sound environment simulation is required -->
+    </audio>
+    <wind>
+        <linear_velocity>0.0 0.0 0.0</linear_velocity> <!-- Adjust to simulate real wind conditions; e.g., <linear_velocity>1.0 0.0 0.0</linear_velocity> for light breeze -->
+    </wind>
+    <spherical_coordinates>
+        <surface_model>EARTH_WGS84</surface_model>
+        <latitude_deg>37.7749</latitude_deg> <!-- Example: San Francisco, adjust to your specific location -->
+        <longitude_deg>-122.4194</longitude_deg>
+        <elevation>30</elevation> <!-- Adjust elevation to match the real environment -->
+        <heading_deg>0</heading_deg> <!-- Set heading to simulate the orientation relative to North -->
+    </spherical_coordinates>
+
+    <model name='flood_4x15'>
+      <pose>0.5104 0.97805 0 0 -0 0</pose>
+      <!-- Wall 15 -->
+      <link name='Wall_15'>
+        <collision name='Wall_15_Collision'>
+          <geometry>
+            <box>
+              <size>5 0.15 2.5</size>
+            </box>
+          </geometry>
+          <pose>0 0 1.25 0 -0 0</pose>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0.8</mu>
+                <mu2>0.8</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='Wall_15_Visual'>
+          <pose>0 0 1.25 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>5 0.15 2.5</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Wood</name>
+            </script>
+            <ambient>0.7 0.7 0.7 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <pose>-9.3 -0.25 0 0 -0 -1.5708</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+
+      <!-- Wall 18 -->
+      <link name='Wall_18'>
+        <collision name='Wall_18_Collision'>
+          <geometry>
+            <box>
+              <size>18.75 0.15 2.5</size>
+            </box>
+          </geometry>
+          <pose>0 0 1.25 0 -0 0</pose>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='Wall_18_Visual'>
+          <pose>0 0 1.25 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>18.75 0.15 2.5</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Bricks</name>
+            </script>
+            <ambient>1 1 1 1</ambient>
+          </material>
+        </visual>
+        <pose>0 -2.675 0 0 -0 0</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+
+      <!-- Wall 19 -->
+      <link name='Wall_19'>
+        <collision name='Wall_19_Collision'>
+          <geometry>
+            <box>
+              <size>5.5 0.15 2.5</size>
+            </box>
+          </geometry>
+          <pose>0 0 1.25 0 -0 0</pose>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='Wall_19_Visual'>
+          <pose>0 0 1.25 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>5.5 0.15 2.5</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Wood</name>
+            </script>
+            <ambient>1 1 1 1</ambient>
+          </material>
+        </visual>
+        <pose>9.3 0 0 0 -0 1.5708</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+
+      <!-- Wall 20 -->
+      <link name='Wall_20'>
+        <collision name='Wall_20_Collision'>
+          <geometry>
+            <box>
+              <size>18.75 0.15 2.5</size>
+            </box>
+          </geometry>
+          <pose>0 0 1.25 0 -0 0</pose>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='Wall_20_Visual'>
+          <pose>0 0 1.25 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>18.75 0.15 2.5</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Bricks</name>
+            </script>
+            <ambient>1 1 1 1</ambient>
+          </material>
+        </visual>
+        <pose>0 2.675 0 0 -0 3.14159</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+
+      <!-- Wall 21 -->
+      <link name='Wall_21'>
+        <collision name='Wall_21_Collision'>
+          <geometry>
+            <box>
+              <size>0.65 0.15 2.5</size>
+            </box>
+          </geometry>
+          <pose>0 0 1.25 0 -0 0</pose>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='Wall_21_Visual'>
+          <pose>0 0 1.25 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.65 0.15 2.5</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Wood</name>
+            </script>
+            <ambient>1 1 1 1</ambient>
+          </material>
+        </visual>
+        <pose>-9.3 2.425 0 0 -0 -1.5708</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      
+      <static>1</static>
+    </model>
+
+   
+    <state world_name='default'>
+      <sim_time>232 965000000</sim_time>
+      <real_time>234 499822607</real_time>
+      <wall_time>1724900199 930673329</wall_time>
+      <iterations>232965</iterations>
+      <model name='flood_4x15'>
+        <pose>0.5104 0.97805 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='Wall_15'>
+          <pose>-8.7896 0.72805 0 0 0 -1.5708</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='Wall_18'>
+          <pose>0.5104 -1.69695 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='Wall_19'>
+          <pose>9.8104 0.97805 0 0 -0 1.5708</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='Wall_20'>
+          <pose>0.5104 3.65305 0 0 -0 3.14159</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='Wall_21'>
+          <pose>-8.7896 3.40305 0 0 0 -1.5708</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='ground_plane'>
+        <pose>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+     
+      
+      <light name='sun'>
+        <pose>10 10 20 0 -0.5 0</pose>
+      </light>
+
+    </state>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose>0.383823 3.43882 46.4182 0 1.5058 -0.012003</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+  </world>
+</sdf>
