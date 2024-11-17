@@ -37,7 +37,7 @@ First, create workspace
 ``` bash
 mkdir -p rl_ws/src
 cd rl_ws/src
-git clone https://github.com/TommasoVandermeer/Hospitalbot-Path-Planning.git
+git clone https://github.com/bandithvipho22/sim-to-real-rl-navigation.git
 ```
 Then, go to directory and build
 ``` bash
