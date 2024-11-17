@@ -66,3 +66,7 @@ After, finished training we can use this command below to evaluate and see the p
 ros2 launch rl_robot rl_agent.launch.py
 ```
 You can adjust path and total episode in file "diffbot_env.py and rl_agent.py"
+
+# Documents
+If you want to know detail on my project, you can click on link below, it conduct with video demo, results and my report:
+[CLICK HERE](https://drive.google.com/drive/folders/1Xx778Jn0rlqk1LbfeiU1i2Y9yM70CALA?usp=sharing)
